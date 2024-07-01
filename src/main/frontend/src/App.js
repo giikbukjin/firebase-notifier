@@ -1,42 +1,45 @@
+import React, { useEffect, useState } from 'react';
 import './App.css';
-import React, { useEffect } from 'react';
-import Main from "./Components/Main/Main";
-import { initializeApp } from "firebase/app";
-import { activate, fetchAndActivate, fetchConfig, getRemoteConfig, getValue } from "firebase/remote-config";
+import { ref, set, onValue } from 'firebase/database';
+import { database } from './firebaseInit';
 
-const firebaseConfig = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_APP_ID,
-    measurementId: process.env.REACT_APP_MEASUREMENT_ID
-};
-
-function App() {
-    const [greet, setGreet] = React.useState("");
-    const app = initializeApp(firebaseConfig);
-    const remoteConfig = getRemoteConfig(app);
-    remoteConfig.settings.minimumFetchIntervalMillis = 0;
+const App = () => {
+    const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
-        let greeting = '';
-        fetchAndActivate(remoteConfig)
-            .then(() => {
-                greeting = getValue(remoteConfig, 'greet');
-                setGreet(greeting._value);
-            })
-            .catch((err) => {
-                console.log("Failed to fetch remote config", err);
-            });
+        const announcementsRef = ref(database, 'announcements/');
+        onValue(announcementsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                setAnnouncements(Object.values(data));
+            }
+        });
     }, []);
 
+    const addAnnouncement = () => {
+        const newAnnouncementRef = ref(database, `announcements/${Date.now()}`);
+        set(newAnnouncementRef, {
+            message: '새로운 공지사항입니다.'
+        })
+            .then(() => {
+                console.log('Announcement added successfully.');
+            })
+            .catch((error) => {
+                console.error('Error adding announcement:', error);
+            });
+    };
+
     return (
-        <>
-            <Main greet={ greet } />
-        </>
+        <div className="App">
+            <h1>공지사항</h1>
+            <ul>
+                {announcements.map((announcement, index) => (
+                    <li key={index}>{announcement.message}</li>
+                ))}
+            </ul>
+            <button onClick={addAnnouncement}>공지사항 추가</button>
+        </div>
     );
-}
+};
 
 export default App;
