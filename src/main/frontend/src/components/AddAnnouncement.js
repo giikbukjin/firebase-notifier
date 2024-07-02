@@ -6,6 +6,7 @@ import { useAuth } from './Auth';
 import './common.css';
 
 const AddAnnouncement = () => {
+    // 현재 사용자 정보를 AuthContext에서 가져옴
     const { currentUser } = useAuth();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -24,6 +25,7 @@ const AddAnnouncement = () => {
         setLoading(true);
 
         try {
+            // Firestore에서 현재 사용자의 문서 가져옴
             const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
             if (!userDoc.exists()) {
                 console.error("User document does not exist.");
@@ -32,19 +34,22 @@ const AddAnnouncement = () => {
                 return;
             }
 
+            // 사용자의 이름을 가져옴
             const userName = userDoc.data().name;
 
             console.log('Attempting to add announcement with:', { title, content, userName });
             await addDoc(collection(db, 'announcements'), {
                 title,
                 content,
+                // 공지사항 내용의 작성자를 사용자의 이름으로 대체함
                 author: userName,
                 timestamp: new Date()
             });
             alert('Announcement added successfully');
             setTitle('');
             setContent('');
-            navigate('/'); // Redirect to the announcement list page
+            // 입력 완료 후 공지 목록 페이지로 리다이렉트
+            navigate('/');
         } catch (error) {
             console.error('Error adding announcement: ', error);
             alert('Failed to add announcement');
