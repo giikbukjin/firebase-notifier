@@ -28,7 +28,6 @@ const AnnouncementList = () => {
                 <div className="header-placeholder"></div>
                 <div className="header-text">
                     <h1>공지사항</h1>
-                    <p>공지사항 안내드립니다.</p>
                 </div>
             </header>
             <main>

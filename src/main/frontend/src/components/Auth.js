@@ -1,13 +1,13 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     auth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    onAuthStateChanged,
-    signOut,
     db,
     doc,
-    getDoc
+    getDoc,
+    GoogleAuthProvider,
+    onAuthStateChanged,
+    signInWithPopup,
+    signOut
 } from '../firebase-init';
 
 const AuthContext = React.createContext();
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        return onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setCurrentUser(user);
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -31,8 +31,6 @@ export const AuthProvider = ({ children }) => {
             }
             setLoading(false);
         });
-
-        return unsubscribe;
     }, []);
 
     const login = async () => {
