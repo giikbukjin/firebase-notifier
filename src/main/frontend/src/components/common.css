@@ -1,0 +1,165 @@
+/* General layout */
+body {
+    background-color: #0f0d0b; /* 전체 배경색 설정 */
+    color: white; /* 기본 텍스트 색상 설정 */
+    margin: 0;
+}
+
+.container {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    position: relative;
+    text-align: center;
+    color: white;
+    margin: 0;
+}
+
+.header-placeholder {
+    width: 100%;
+    height: 200px; /* 원하는 높이로 설정 */
+    background: linear-gradient(to bottom,
+    #0f4590,
+    #114f95,
+    #135a99,
+    #15649e,
+    #176ea3,
+    #1879a7,
+    #1a83ac,
+    #1c8db1,
+    #1e98b5,
+    #20a2ba); /* 그라데이션 색상 적용 */
+}
+
+.header-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.header .nav-tabs {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.nav-tabs .buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-tab {
+    margin: 0 15px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.nav-tab.active {
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+}
+
+/* Main content */
+main {
+    padding: 20px;
+}
+
+h2 {
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+}
+
+.auth-button, .admin-button {
+    background-color: #b4e925; /* 버튼 색상 변경 */
+    color: black;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.auth-button:hover, .admin-button:hover {
+    background-color: #ffffff; /* 호버 시 약간 어두운 색상 */
+}
+
+.announcement-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.announcement-item {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.announcement-item h3 {
+    margin: 0 0 10px 0;
+}
+
+.announcement-item p {
+    margin: 0 0 10px 0;
+}
+
+/* Form styling */
+.announcement-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: black;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: black; /* 입력 텍스트 색상 변경 */
+    background-color: white; /* 입력 배경색 변경 */
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.submit-button {
+    background-color: #b4e925; /* 버튼 색상 변경 */
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.submit-button:hover {
+    background-color: #ffffff; /* 호버 시 약간 어두운 색상 */
+}
