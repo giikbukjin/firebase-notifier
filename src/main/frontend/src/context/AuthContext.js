@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { auth, db } from '../firebase-init';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { auth, db, onAuthStateChanged, doc, getDoc } from '../firebase-init';
 
 const AuthContext = React.createContext();
 
@@ -19,10 +17,20 @@ export const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setCurrentUser(user);
             if (user) {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                const userData = userDoc.data();
-                setRole(userData?.role);
-                setUserName(userData?.name); // Assuming the user's name is stored in the 'name' field
+                try {
+                    console.log("Fetching user document for UID: ", user.uid);
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        console.log("User document data: ", userData);
+                        setRole(userData?.role);
+                        setUserName(userData?.name);
+                    } else {
+                        console.error("No such document!");
+                    }
+                } catch (error) {
+                    console.error("Error fetching user document: ", error);
+                }
             } else {
                 setRole(null);
                 setUserName(null);
