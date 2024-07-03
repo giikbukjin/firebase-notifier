@@ -65,11 +65,11 @@ const AddAnnouncement = () => {
 
     return (
         <div className="container">
-            <div className="header-buttons">
-                <button className="back-button" onClick={() => navigate('/')}>목록으로</button>
-            </div>
             <main>
                 <form onSubmit={handleSubmit} className="announcement-form">
+                    <div className="header-buttons">
+                        <button className="back-button" onClick={() => navigate('/')}>목록으로</button>
+                    </div>
                     <div className="form-group">
                         <label>제목</label>
                         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required/>
