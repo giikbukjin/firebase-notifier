@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { collection, query, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase-init';
+import { db } from '../../firebase/firebase-init';
 
+// Firestore 데이터베이스에서 공지사항을 실시간으로 가져와 화면에 표시
 function MessageList() {
     const [messages, setMessages] = useState([]);
 
@@ -13,7 +14,6 @@ function MessageList() {
                 ...doc.data()
             }));
             setMessages(messagesList);
-            console.log("Fetched messages from Firestore: ", messagesList);
         });
 
         return () => unsubscribe(); // Cleanup the subscription on unmount

@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {auth, db, doc, getDoc, onAuthStateChanged} from '../firebase-init';
+import {auth, db, doc, getDoc, onAuthStateChanged} from '../firebase/firebase-init';
 
+// Firebase를 사용하여 사용자의 인증 상태 관리
 const AuthContext = React.createContext();
 
 export const useAuth = () => {
@@ -49,8 +50,6 @@ export const AuthProvider = ({ children }) => {
         role,
         userName,
         login: async () => {
-        },
-        logout: async () => {
         },
     };
 

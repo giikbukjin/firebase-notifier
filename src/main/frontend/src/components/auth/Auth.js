@@ -8,11 +8,17 @@ import {
     onAuthStateChanged,
     signInWithPopup,
     signOut
-} from '../firebase-init';
+} from '../../firebase/firebase-init';
 
+// Firebase를 사용하여 사용자의 인증 상태 관리, Google 로그인 기능 제공
 const AuthContext = React.createContext();
 
 export const useAuth = () => useContext(AuthContext);
+
+const fetchUserRole = async (user) => {
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    return userDoc.data()?.role || 'user';
+};
 
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
@@ -23,8 +29,7 @@ export const AuthProvider = ({ children }) => {
         return onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setCurrentUser(user);
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                setRole(userDoc.data()?.role || 'user');
+                setRole(await fetchUserRole(user));
             } else {
                 setCurrentUser(null);
                 setRole(null);
@@ -32,6 +37,7 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         });
     }, []);
+
 
     const login = async () => {
         const provider = new GoogleAuthProvider();
@@ -48,8 +54,7 @@ export const AuthProvider = ({ children }) => {
         currentUser,
         role,
         login,
-        logout,
-        loading
+        logout
     };
 
     return (

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
-import { db } from '../firebase-init';
-import { useAuth } from './Auth';
+import { db } from '../../firebase/firebase-init';
+import { useAuth } from '../auth/Auth';
 import { Link } from 'react-router-dom';
-import './common.css';
+import '../common.css';
 
+// 공지사항 목록 표시
 const AnnouncementList = () => {
     const { currentUser, login, logout, role } = useAuth();
     const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
+        // 작성일 내림차순 정렬
         const q = query(collection(db, 'announcements'), orderBy('timestamp', 'desc'));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const announcementsList = querySnapshot.docs.map(doc => ({
@@ -22,26 +24,32 @@ const AnnouncementList = () => {
         return () => unsubscribe();
     }, []);
 
+    const renderButtons = () => {
+        if (currentUser) {
+            return (
+                <>
+                    <button className="auth-button" onClick={logout}>로그아웃</button>
+                    {role === 'admin' && (
+                        <Link to="/admin">
+                            <button className="admin-button">공지사항 작성</button>
+                        </Link>
+                    )}
+                </>
+            );
+        } else {
+            return <button className="auth-button" onClick={login}>로그인</button>;
+        }
+    };
+
     return (
         <div className="container">
             <header className="header">
-                <div className="header-placeholder"></div>
-                <div className="header-text">
-                    <h1>공지사항</h1>
+                <h2>공지사항</h2>
+                <div className="buttons">
+                    {renderButtons()}
                 </div>
             </header>
             <main>
-                <h2>공지사항</h2>
-                {currentUser ? (
-                    <button className="auth-button" onClick={logout}>Logout</button>
-                ) : (
-                    <button className="auth-button" onClick={login}>Login</button>
-                )}
-                {currentUser && role === 'admin' && (
-                    <Link to="/admin">
-                        <button className="admin-button">Add Notification</button>
-                    </Link>
-                )}
                 <ul className="announcement-list">
                     {announcements.map((announcement) => (
                         <li key={announcement.id} className="announcement-item">

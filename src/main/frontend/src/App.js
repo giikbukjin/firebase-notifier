@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from './components/Auth';
-import AddAnnouncement from './components/AddAnnouncement';
-import AnnouncementList from './components/AnnouncementList';
-import Login from './components/Login';
-import PrivateRoute from './components/PrivateRoute';
+import { AuthProvider } from './components/auth/Auth';
+import AddAnnouncement from './components/announcement/AddAnnouncement';
+import AnnouncementList from './components/announcement/AnnouncementList';
+import Login from './components/auth/Login';
+import PrivateRoute from './components/auth/PrivateRoute';
 
 const App = () => {
     return (
