@@ -12,10 +12,6 @@ const AnnouncementList = () => {
     const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
-        // 모든 사용자가 웹에 들어올 때 알림 권한 요청 및 토큰 발행
-        handleAllowNotification();
-
-        // 작성일 내림차순 정렬
         const q = query(collection(db, 'announcements'), orderBy('timestamp', 'desc'));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const announcementsList = querySnapshot.docs.map(doc => ({
@@ -24,8 +20,13 @@ const AnnouncementList = () => {
             }));
             setAnnouncements(announcementsList);
         });
+
+        if (currentUser !== undefined && currentUser !== null) {
+            handleAllowNotification(currentUser);  // 로그인된 사용자의 정보와 함께 함수 호출
+        }
+
         return () => unsubscribe();
-    }, []);
+    }, [currentUser]);
 
     const renderButtons = () => {
         if (currentUser) {
