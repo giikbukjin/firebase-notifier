@@ -4,17 +4,14 @@ import { db } from '../../firebase/firebase-init';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/Auth';
 import '../common.css';
+import { postAnnouncementToBackend } from '../../firebase/firebase-init';
 
 // 사용자가 공지사항을 작성하고 Firestore에 저장
 const AddAnnouncement = () => {
-    // 현재 사용자 정보를 AuthContext에서 가져옴
     const { currentUser } = useAuth();
-    // 공지사항의 제목, 내용을 상태로 관리
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    // 비동기 작업 중 로딩 상태 관리
     const [loading, setLoading] = useState(false);
-    // 페이지 이동을 위한 네비게이션
     const navigate = useNavigate();
 
     // 경고 메시지와 상태 업데이트
@@ -34,6 +31,12 @@ const AddAnnouncement = () => {
         setLoading(true);
 
         try {
+            const message = {
+                title,
+                content,
+                timestamp: new Date()
+            };
+
             // Firestore에서 현재 사용자의 문서 가져옴
             const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
             if (!userDoc.exists()) {
@@ -56,6 +59,8 @@ const AddAnnouncement = () => {
             setContent('');
             // 입력 완료 후 공지 목록 페이지로 리다이렉트
             navigate('/');
+            // await saveAnnouncementToFirestore(message);
+            await postAnnouncementToBackend(message);
         } catch (error) {
             showAlertAndSetLoading('공지 등록 실패', false);
         } finally {

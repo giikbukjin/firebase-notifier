@@ -1,9 +1,7 @@
-// registerServiceWorker.js 파일
 export function registerServiceWorker() {
     if ("serviceWorker" in navigator) {
         window.addEventListener("load", function () {
-            navigator.serviceWorker
-                .register("/firebase-messaging-sw.js")
+            navigator.serviceWorker.register("/firebase-messaging-sw.js")
                 .then(function (registration) {
                     console.log("Service Worker가 scope에 등록되었습니다.:", registration.scope);
                 })

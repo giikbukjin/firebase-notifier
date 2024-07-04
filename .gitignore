@@ -375,3 +375,4 @@ gradle-app.setting
 fir-notifier-ffcfd-firebase-adminsdk-pk7s6-03fa786aed.json
 
 # End of https://www.toptal.com/developers/gitignore/api/java,react,intellij+all,macos,windows,gradle,visualstudiocode,node
+src/main/resources/serviceAccountKey.json
