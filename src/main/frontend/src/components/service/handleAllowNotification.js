@@ -1,6 +1,6 @@
 import { getMessaging, getToken } from 'firebase/messaging';
-import { sendTokenToServer } from "./api";
 import { registerServiceWorker } from "../../firebase/registerServiceWorker";
+import {sendTokenToServer} from "./sendTokenToServer";
 
 // 로그인 한 유저의 첫 화면에서 토큰 발급 요청
 export async function handleAllowNotification() {
