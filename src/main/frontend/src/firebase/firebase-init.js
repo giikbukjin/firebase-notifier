@@ -8,6 +8,7 @@ import {
     signOut
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getMessaging } from 'firebase/messaging';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -22,6 +23,7 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const messaging = getMessaging(app);
 
 export {
     auth,
@@ -32,5 +34,6 @@ export {
     onAuthStateChanged,
     signOut,
     doc,
-    getDoc
+    getDoc,
+    messaging
 };

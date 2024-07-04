@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './components/auth/Auth';
 import AddAnnouncement from './components/announcement/AddAnnouncement';
 import AnnouncementList from './components/announcement/AnnouncementList';
-import Login from './components/auth/Login';
 import PrivateRoute from './components/auth/PrivateRoute';
 
 const App = () => {
@@ -12,7 +11,6 @@ const App = () => {
             <Router>
                 <div className="App">
                     <Routes>
-                        <Route path="/login" element={<Login />} />
                         <Route element={<PrivateRoute requiredRole="admin" />}>
                             <Route path="/admin" element={<AddAnnouncement />} />
                         </Route>
