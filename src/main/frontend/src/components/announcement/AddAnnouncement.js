@@ -34,6 +34,7 @@ const AddAnnouncement = () => {
             const message = {
                 title,
                 content,
+                author: currentUser.displayName,
                 timestamp: new Date()
             };
 

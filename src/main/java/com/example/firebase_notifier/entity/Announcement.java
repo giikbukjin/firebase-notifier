@@ -11,12 +11,14 @@ public class Announcement {
     private String title;
     private String content;
     private String timestamp;
+    private String author;
 
     @Override
     public String toString() {
         return "Announcement{" +
                 "title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", author='" + author + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 '}';
     }
