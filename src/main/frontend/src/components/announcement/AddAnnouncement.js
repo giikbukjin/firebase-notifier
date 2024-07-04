@@ -60,7 +60,6 @@ const AddAnnouncement = () => {
             setContent('');
             // 입력 완료 후 공지 목록 페이지로 리다이렉트
             navigate('/');
-            // await saveAnnouncementToFirestore(message);
             await postAnnouncementToBackend(message);
         } catch (error) {
             showAlertAndSetLoading('공지 등록 실패', false);
