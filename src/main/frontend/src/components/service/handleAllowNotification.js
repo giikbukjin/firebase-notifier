@@ -5,22 +5,17 @@ import {saveTokenToServer} from "../../firebase/firebase-init";
 export async function handleAllowNotification(currentUser) {
     try {
         const permission = await Notification.requestPermission();
-        console.log('알림 권한:', permission);
-
         if (permission === 'granted') {
             const messaging = getMessaging();
             const token = await getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY });
 
             if (token) {
-                console.log('FCM 토큰:', token);
                 if (currentUser) {
-                    await saveTokenToServer(currentUser.uid, token);  // 현재 사용자의 UID와 토큰을 서버에 저장
-                    console.log(`토큰이 서버에 저장되었습니다. UID: ${currentUser.uid}`);
+                    await saveTokenToServer(currentUser.uid, token);
                 } else {
                     console.log('토큰을 저장할 사용자가 없습니다.');
                 }
             } else {
-                console.log('등록 토큰을 사용할 수 없습니다. 권한을 요청하세요.');
                 alert('토큰 등록이 불가능합니다. 생성하려면 권한을 허용해주세요');
             }
         } else if (permission === 'denied') {

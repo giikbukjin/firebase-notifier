@@ -19,7 +19,6 @@ const fetchUserRole = async (user) => {
     try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
-            console.log(`사용자 역할 가져오기 성공: ${userDoc.data().role}`);
             return userDoc.data().role;
         } else {
             console.log('사용자 문서가 존재하지 않습니다.');
@@ -44,7 +43,6 @@ export const AuthProvider = ({ children }) => {
                 if (userRole === 'admin') {
                     setCurrentUser(user);
                     setRole(userRole);
-                    console.log('관리자로 로그인되었습니다.');
                 } else {
                     alert('관리자만 로그인할 수 있습니다.');
                     await signOut(auth);

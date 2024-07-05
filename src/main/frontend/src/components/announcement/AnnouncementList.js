@@ -11,7 +11,6 @@ const AnnouncementList = () => {
     const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
-        console.log('공지사항을 불러오는 중...');
         const qGeneral = query(collection(db, 'announcements', 'general', 'announcements'), orderBy('timestamp', 'desc'));
         const qClient1 = query(collection(db, 'announcements', 'client1', 'announcements'), orderBy('timestamp', 'desc'));
 
