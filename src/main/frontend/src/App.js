@@ -8,15 +8,15 @@ import { requestPermission, onMessageListener } from './firebase/firebase-init';
 
 const App = () => {
     useEffect(() => {
-        // Request permission for notifications
+        // 알림 권한 요청
         requestPermission();
 
-        // Listen for incoming messages
+        // 수신 메시지 리스너 설정
         onMessageListener()
             .then((payload) => {
-                console.log('Message received: ', payload);
-                console.log('Notification Title:', payload.notification.title);
-                console.log('Notification Body:', payload.notification.body);
+                console.log('메세지 수신: ', payload);
+                console.log('공지사항 제목:', payload.notification.title);
+                console.log('공지사항 내용:', payload.notification.body);
             })
             .catch((err) => console.log('Failed to receive message: ', err));
     }, []);
@@ -26,10 +26,10 @@ const App = () => {
             <Router>
                 <div className="App">
                     <Routes>
+                        <Route path="/" element={<AnnouncementList />} />
                         <Route element={<PrivateRoute requiredRole="admin" />}>
                             <Route path="/admin" element={<AddAnnouncement />} />
                         </Route>
-                        <Route path="/" element={<AnnouncementList />} />
                     </Routes>
                 </div>
             </Router>

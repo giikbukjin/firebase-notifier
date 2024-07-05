@@ -29,13 +29,6 @@ const AddAnnouncement = () => {
         setLoading(true);
 
         try {
-            const message = {
-                title,
-                content,
-                author: currentUser.displayName,
-                timestamp: new Date()
-            };
-
             const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
             if (!userDoc.exists()) {
                 showAlertAndSetLoading('공지 등록 실패: 사용자가 존재하지 않습니다.', false);
@@ -51,12 +44,20 @@ const AddAnnouncement = () => {
                 timestamp: new Date()
             });
 
+            const message = {
+                title,
+                content,
+                author: userName,
+                timestamp: new Date()
+            };
+
             alert('공지 등록 성공');
             setTitle('');
             setContent('');
             navigate('/');
             await postAnnouncementToBackend(message);
         } catch (error) {
+            console.error('공지 등록 실패:', error);
             showAlertAndSetLoading('공지 등록 실패', false);
         } finally {
             setLoading(false);

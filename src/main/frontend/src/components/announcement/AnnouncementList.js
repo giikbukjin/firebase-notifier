@@ -11,10 +11,12 @@ const AnnouncementList = () => {
     const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
+        console.log('공지사항을 불러오는 중...');
         const qGeneral = query(collection(db, 'announcements', 'general', 'announcements'), orderBy('timestamp', 'desc'));
         const qClient1 = query(collection(db, 'announcements', 'client1', 'announcements'), orderBy('timestamp', 'desc'));
 
         const unsubscribeGeneral = onSnapshot(qGeneral, (querySnapshot) => {
+            console.log('전체 공지사항 데이터를 불러왔습니다.');
             const generalAnnouncements = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 type: 'general',
@@ -24,6 +26,7 @@ const AnnouncementList = () => {
         });
 
         const unsubscribeClient1 = onSnapshot(qClient1, (querySnapshot) => {
+            console.log('클라이언트 1 공지사항 데이터를 불러왔습니다.');
             const client1Announcements = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 type: 'client1',

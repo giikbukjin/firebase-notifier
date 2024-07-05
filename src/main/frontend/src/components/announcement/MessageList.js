@@ -16,7 +16,7 @@ function MessageList() {
             setMessages(messagesList);
         });
 
-        return () => unsubscribe(); // Cleanup the subscription on unmount
+        return () => unsubscribe();
     }, []);
 
     return (
