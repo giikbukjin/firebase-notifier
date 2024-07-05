@@ -91,28 +91,58 @@ Firebase와 React, Spring Boot를 활용한 실시간 공지사항 등록 및 �
    ```
    npm start
    ```
-  
+   
 <br>
 
 ## 주요 코드
-### 로그인 및 인증
-- AuthProvider (`src/components/auth/Auth.js`)
+### 로그인 및 인증 (`src/components/auth/Auth.js`)
+- AuthProvider 
   - Firebase 인증 상태를 관리하고, admin 계정만 로그인할 수 있도록 처리
   - 로그인된 사용자의 역할(role)을 확인
-
-### 공지사항 등록
-- AddAnnouncement (`src/components/announcement/AddAnnouncement.js`)
+  ```
+  알림 권한: granted
+  FCM 토큰: ${token}
+  
+  사용자 역할 가져오기 성공: admin
+  로그인한 사용자 역할: ${userRole}
+  관리자로 로그인되었습니다.
+  ```
+  
+### 공지사항 등록 (`src/components/announcement/AddAnnouncement.js`)
+- AddAnnouncement 
   - 관리자(admin)만 접근 가능
   - 전체 발송/특정 대상 발송 선택 가능
   - 공지사항을 작성하고 Firestore에 저장
-
-### 공지사항 목록
-- AnnouncementList (`src/components/announcement/AnnouncementList.js`)
+  ```
+  공지 등록 성공
+  ```
+  
+### 공지사항 목록 (`src/components/announcement/AnnouncementList.js`)
+- AnnouncementList 
   - 모든 사용자가 접근 가능
   - Firestore에서 공지사항을 실시간으로 받아와 목록을 표시
+  ```
+  공지사항을 불러오는 중...
+  전체 공지사항 데이터를 불러왔습니다.
+  클라이언트 1 공지사항 데이터를 불러왔습니다.
+  ```
   
-### 알림 토큰 저장
-- saveTokenToServer (`src/components/firebase/firebase-init.js`)
+### 알림 토큰 저장 (`src/components/firebase/firebase-init.js`)
+- saveTokenToServer 
   - 로그인 시 발급된 FCM 토큰을 Firestore에 저장
   - FCM 토큰 이용해 웹 알림 전송 가능
+  ```
+  토큰이 Firestore에 성공적으로 저장되었습니다.
+  토큰이 서버에 저장되었습니다. UID: ${uid}
+  ```
   
+### 공지사항 알림 (`firebase_notifier/controller/AnnouncementController`)
+- receiveAnnouncement
+  - 공지사항 등록 시 백엔드 콘솔로 내용 표시
+  ```
+  === 공지사항 ===
+  공지사항 제목: {title}
+  공지사항 내용: {content}
+  작성자: {author}
+  타임스탬프: {timestamp}
+  ```
