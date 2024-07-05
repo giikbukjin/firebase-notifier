@@ -6,21 +6,19 @@ import { useAuth } from '../auth/Auth';
 import '../common.css';
 import { postAnnouncementToBackend } from '../../firebase/firebase-init';
 
-// 사용자가 공지사항을 작성하고 Firestore에 저장
 const AddAnnouncement = () => {
     const { currentUser, role } = useAuth();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
+    const [audience, setAudience] = useState('general');
     const navigate = useNavigate();
 
-    // 경고 메시지와 상태 업데이트
     const showAlertAndSetLoading = (message, isLoading) => {
         alert(message);
         setLoading(isLoading);
     };
 
-    // 공지사항 폼 제출
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -38,26 +36,24 @@ const AddAnnouncement = () => {
                 timestamp: new Date()
             };
 
-            // Firestore에서 현재 사용자의 문서 가져옴
             const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
             if (!userDoc.exists()) {
                 showAlertAndSetLoading('공지 등록 실패: 사용자가 존재하지 않습니다.', false);
                 return;
             }
 
-            // 사용자의 이름을 가져옴
             const userName = userDoc.data().name;
-
-            await addDoc(collection(db, 'announcements'), {
+            const announcementDocRef = collection(db, 'announcements', audience, 'announcements');
+            await addDoc(announcementDocRef, {
                 title,
                 content,
                 author: userName,
                 timestamp: new Date()
             });
+
             alert('공지 등록 성공');
             setTitle('');
             setContent('');
-            // 입력 완료 후 공지 목록 페이지로 리다이렉트
             navigate('/');
             await postAnnouncementToBackend(message);
         } catch (error) {
@@ -81,6 +77,13 @@ const AddAnnouncement = () => {
                     <div className="form-group">
                         <label>내용</label>
                         <textarea value={content} onChange={(e) => setContent(e.target.value)} required></textarea>
+                    </div>
+                    <div className="form-group">
+                        <label>대상</label>
+                        <select value={audience} onChange={(e) => setAudience(e.target.value)} required>
+                            <option value="general">전체</option>
+                            <option value="client1">클라이언트 1</option>
+                        </select>
                     </div>
                     <button type="submit" className="submit-button" disabled={loading}>
                         {loading ? '등록 중...' : '공지사항 등록'}

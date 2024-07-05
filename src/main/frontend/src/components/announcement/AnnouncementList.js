@@ -6,26 +6,40 @@ import { Link } from 'react-router-dom';
 import { handleAllowNotification } from '../service/handleAllowNotification';
 import '../common.css';
 
-// 공지사항 목록 표시
 const AnnouncementList = () => {
     const { currentUser, login, logout, role } = useAuth();
     const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
-        const q = query(collection(db, 'announcements'), orderBy('timestamp', 'desc'));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const announcementsList = querySnapshot.docs.map(doc => ({
+        const qGeneral = query(collection(db, 'announcements', 'general', 'announcements'), orderBy('timestamp', 'desc'));
+        const qClient1 = query(collection(db, 'announcements', 'client1', 'announcements'), orderBy('timestamp', 'desc'));
+
+        const unsubscribeGeneral = onSnapshot(qGeneral, (querySnapshot) => {
+            const generalAnnouncements = querySnapshot.docs.map(doc => ({
                 id: doc.id,
+                type: 'general',
                 ...doc.data()
             }));
-            setAnnouncements(announcementsList);
+            setAnnouncements(prev => [...prev.filter(a => a.type !== 'general'), ...generalAnnouncements]);
         });
 
-        if (currentUser !== undefined && currentUser !== null) {
-            handleAllowNotification(currentUser);  // 로그인된 사용자의 정보와 함께 함수 호출
+        const unsubscribeClient1 = onSnapshot(qClient1, (querySnapshot) => {
+            const client1Announcements = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                type: 'client1',
+                ...doc.data()
+            }));
+            setAnnouncements(prev => [...prev.filter(a => a.type !== 'client1'), ...client1Announcements]);
+        });
+
+        if (currentUser) {
+            handleAllowNotification(currentUser);
         }
 
-        return () => unsubscribe();
+        return () => {
+            unsubscribeGeneral();
+            unsubscribeClient1();
+        };
     }, [currentUser]);
 
     const renderButtons = () => {
@@ -56,8 +70,13 @@ const AnnouncementList = () => {
             <main>
                 <ul className="announcement-list">
                     {announcements.map((announcement) => (
-                        <li key={announcement.id} className="announcement-item">
-                            <h3>{announcement.title}</h3>
+                        <li key={`${announcement.type}-${announcement.id}`} className="announcement-item">
+                            <div className="announcement-header">
+                                <span className={`announcement-tag ${announcement.type}`}>
+                                    {announcement.type === 'general' ? '전체공지' : '클라이언트1'}
+                                </span>
+                                <h3>{announcement.title}</h3>
+                            </div>
                             <p>{announcement.content}</p>
                             <small>By {announcement.author} on {new Date(announcement.timestamp.toDate()).toLocaleString()}</small>
                         </li>
