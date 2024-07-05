@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         return onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userRole = await fetchUserRole(user);
-                console.log(`Logged in user role: ${userRole}`); // Log user role
+                console.log(`Logged in user role: ${userRole}`);
                 if (userRole === 'admin') {
                     setCurrentUser(user);
                     setRole(userRole);
