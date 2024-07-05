@@ -1,2 +1,118 @@
 # firebase-notifier
-Notification System With React, Spring Boot, and Firebase
+Firebase와 React, Spring Boot를 활용한 실시간 공지사항 등록 및 알림 서비스
+
+<br>
+
+## 기능 소개
+- 공지사항 등록: 관리자 계정으로 공지사항을 작성하고 Firebase Firestore에 저장
+- 공지사항 목록 표시: 웹 페이지에서 공지사항 목록을 실시간으로 확인 가능
+- 알림 전송: 새로운 공지사항 등록 시 알림 전송
+
+<br>
+
+## 사용 기술
+- React `18.3.1` : 사용자 인터페이스 구현
+- Spring Boot `3.3.1` : 알림 전송 로직 처리
+- Firebase `9.23.0` :
+  - Cloud Firestore: 공지사항 데이터 저장
+  - Authentication: 사용자 인증 및 권한 관리
+  
+<br>
+ 
+## Firebase 설정
+### 프로젝트 구조 설정
+- Firebase 콘솔에서 새로운 프로젝트 생성
+- Firestore Database를 설정하고 아래와 같은 구조 생성
+  ```
+  announcements
+    ├── general
+    │   └── announcements
+    |       └── {announcementId}
+    └── client1
+        └── announcements
+            └── {announcementId}
+  users
+    └── {userId}
+  tokens
+    └── {userId}
+  ```
+  
+### 관리자(admin) 계정 지정
+- Authentication에서 Google 로그인 방식 활성화
+- Authentication -> 사용자 추가 -> 사용자 UID 복사 <br>
+  Cloud Firestore -> `users` 컬렉션 -> 문서 ID: 사용자 UID -> `role: "admin"` 필드 입력
+  
+### 규칙 설정
+- Cloud Firestore -> 규칙 설정
+  ```
+  // 모든 권한을 허용해 놓은 개발용 규칙
+  rules_version = '2';
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      match /announcements/{client}/{announcementId} {
+        allow read: if true;
+        allow write: if request.auth != null && request.auth.token.admin == true;
+      }
+    }
+  }
+  ```
+
+<br>
+
+## 설치 및 실행
+### 비공개 키
+- Firebase 콘솔 -> 프로젝트 설정 -> 서비스 계정 -> 비공개 키를 받아 
+  `src/main/resources/serviceAccountKey.json`에 넣기
+- Firebase 콘솔 -> 프로젝트 설정 -> 일반 -> 내 앱의 npm 코드를 받아 `src/main/.env`에서 환경변수로 사용하기
+  ```JAVASCRIPT
+  // firebase_init.js
+  const firebaseConfig = {
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID
+  };
+  ```
+### 프로젝트 설치 및 실행
+1. 프로젝트 클론
+   ```
+   git clone https://github.com/giikbukjin/firebase-notifier.git
+   cd firebase-notifier
+   ```
+2. 필요한 패키지 설치
+   ```
+   npm install
+   ```
+4. Spring Boot Application Run
+5. React Server Run
+   ```
+   npm start
+   ```
+  
+<br>
+
+## 주요 코드
+### 로그인 및 인증
+- AuthProvider (`src/components/auth/Auth.js`)
+  - Firebase 인증 상태를 관리하고, admin 계정만 로그인할 수 있도록 처리
+  - 로그인된 사용자의 역할(role)을 확인
+
+### 공지사항 등록
+- AddAnnouncement (`src/components/announcement/AddAnnouncement.js`)
+  - 관리자(admin)만 접근 가능
+  - 전체 발송/특정 대상 발송 선택 가능
+  - 공지사항을 작성하고 Firestore에 저장
+
+### 공지사항 목록
+- AnnouncementList (`src/components/announcement/AnnouncementList.js`)
+  - 모든 사용자가 접근 가능
+  - Firestore에서 공지사항을 실시간으로 받아와 목록을 표시
+  
+### 알림 토큰 저장
+- saveTokenToServer (`src/components/firebase/firebase-init.js`)
+  - 로그인 시 발급된 FCM 토큰을 Firestore에 저장
+  - FCM 토큰 이용해 웹 알림 전송 가능
+  
