@@ -25,6 +25,7 @@ export const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const messaging = getMessaging(app);
+const provider = new GoogleAuthProvider();
 
 export {
     auth,
@@ -36,7 +37,8 @@ export {
     signOut,
     doc,
     getDoc,
-    messaging
+    messaging,
+    provider
 };
 
 export const requestPermission = async () => {

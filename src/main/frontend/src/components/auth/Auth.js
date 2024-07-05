@@ -28,8 +28,17 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         return onAuthStateChanged(auth, async (user) => {
             if (user) {
-                setCurrentUser(user);
-                setRole(await fetchUserRole(user));
+                const userRole = await fetchUserRole(user);
+                console.log(`Logged in user role: ${userRole}`); // Log user role
+                if (userRole === 'admin') {
+                    setCurrentUser(user);
+                    setRole(userRole);
+                } else {
+                    alert('관리자만 로그인할 수 있습니다.');
+                    await signOut(auth);
+                    setCurrentUser(null);
+                    setRole(null);
+                }
             } else {
                 setCurrentUser(null);
                 setRole(null);

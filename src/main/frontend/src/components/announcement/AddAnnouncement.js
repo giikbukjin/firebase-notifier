@@ -8,7 +8,7 @@ import { postAnnouncementToBackend } from '../../firebase/firebase-init';
 
 // 사용자가 공지사항을 작성하고 Firestore에 저장
 const AddAnnouncement = () => {
-    const { currentUser } = useAuth();
+    const { currentUser, role } = useAuth();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ const AddAnnouncement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!currentUser) {
+        if (role !== 'admin') {
             showAlertAndSetLoading('공지 등록 실패: 계정 권한이 없습니다.', false);
             return;
         }
@@ -51,7 +51,6 @@ const AddAnnouncement = () => {
             await addDoc(collection(db, 'announcements'), {
                 title,
                 content,
-                // 공지사항 내용의 작성자를 사용자의 이름으로 대체함
                 author: userName,
                 timestamp: new Date()
             });
@@ -77,7 +76,7 @@ const AddAnnouncement = () => {
                     </div>
                     <div className="form-group">
                         <label>제목</label>
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required/>
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
                     </div>
                     <div className="form-group">
                         <label>내용</label>
