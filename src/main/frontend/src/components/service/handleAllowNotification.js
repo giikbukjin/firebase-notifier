@@ -12,6 +12,7 @@ export async function handleAllowNotification(currentUser) {
             if (token) {
                 if (currentUser) {
                     await saveTokenToServer(currentUser.uid, token);
+                    console.log('사용자 UID : ', currentUser.uid);
                 } else {
                     console.log('토큰을 저장할 사용자가 없습니다.');
                 }

@@ -77,8 +77,9 @@ const AnnouncementList = () => {
             <main>
                 <ul className="announcement-list">
                     {announcements.map((announcement) => (
-                        <li key={`${announcement.type}-${announcement.id}`} className="announcement-item">
-                            <div className="announcement-header" onClick={() => toggleExpand(announcement.id)}>
+                        <li key={`${announcement.type}-${announcement.id}`} className="announcement-item"
+                                onClick={() => toggleExpand(announcement.id)}>
+                            <div className="announcement-header">
                                 <span className={`announcement-tag ${announcement.type}`}>
                                     {announcement.type === 'general' ? '전체공지' : '클라이언트1'}
                                 </span>

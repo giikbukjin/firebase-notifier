@@ -41,7 +41,8 @@ const AddAnnouncement = () => {
                 title,
                 content,
                 author: userName,
-                timestamp: new Date()
+                timestamp: new Date(),
+                readBy: {}
             });
 
             const message = {
