@@ -9,6 +9,7 @@ import '../common.css';
 const AnnouncementList = () => {
     const { currentUser, login, logout, role } = useAuth();
     const [announcements, setAnnouncements] = useState([]);
+    const [expandedIds, setExpandedIds] = useState({})
 
     useEffect(() => {
         const qGeneral = query(collection(db, 'announcements', 'general', 'announcements'), orderBy('timestamp', 'desc'));
@@ -44,6 +45,10 @@ const AnnouncementList = () => {
         };
     }, [currentUser]);
 
+    const toggleExpand = (id) => {
+        setExpandedIds((prev) => ({ ...prev, [id]: !prev[id] }));
+    }
+
     const renderButtons = () => {
         if (currentUser) {
             return (
@@ -57,7 +62,7 @@ const AnnouncementList = () => {
                 </>
             );
         } else {
-            return <button className="auth-button" onClick={login}>로그인</button>;
+            return <button className="auth-button" onClick={login}>로그인</button>
         }
     };
 
@@ -73,14 +78,18 @@ const AnnouncementList = () => {
                 <ul className="announcement-list">
                     {announcements.map((announcement) => (
                         <li key={`${announcement.type}-${announcement.id}`} className="announcement-item">
-                            <div className="announcement-header">
+                            <div className="announcement-header" onClick={() => toggleExpand(announcement.id)}>
                                 <span className={`announcement-tag ${announcement.type}`}>
                                     {announcement.type === 'general' ? '전체공지' : '클라이언트1'}
                                 </span>
                                 <h3>{announcement.title}</h3>
+                                <small>By {announcement.author} on {new Date(announcement.timestamp.toDate()).toLocaleString()}</small>
                             </div>
-                            <p>{announcement.content}</p>
-                            <small>By {announcement.author} on {new Date(announcement.timestamp.toDate()).toLocaleString()}</small>
+                            {expandedIds[announcement.id] && (
+                                <>
+                                    <p>{announcement.content}</p>
+                                </>
+                            )}
                         </li>
                     ))}
                 </ul>
