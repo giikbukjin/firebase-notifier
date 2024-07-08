@@ -94,13 +94,14 @@ const AnnouncementList = () => {
             <main>
                 <ul className="announcement-list">
                     {announcements.map((announcement) => (
-                        <li key={`${announcement.type}-${announcement.id}`} className="announcement-item"
+                        <li key={`${announcement.type}-${announcement.id}`}
+                            className={`announcement-item ${announcement.readBy && announcement.readBy[currentUser?.uid] ? 'announcement-read' : ''}`}
                             onClick={() => { toggleButton(announcement) }}>
                             <div className="announcement-header">
                                 <span className={`announcement-tag ${announcement.type}`}>
                                     {announcement.type === 'general' ? '전체공지' : '클라이언트1'}
                                 </span>
-                                <h3>{announcement.title}</h3>
+                                <h3 className={`${announcement.readBy && announcement.readBy[currentUser?.uid] ? 'announcement-read' : ''}`}>{announcement.title}</h3>
                                 <small>By {announcement.author} on {new Date(announcement.timestamp.toDate()).toLocaleString()}</small>
                             </div>
                             {expandedIds[announcement.id] && (

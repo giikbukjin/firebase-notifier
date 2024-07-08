@@ -85,6 +85,10 @@ h2 {
     background-color: #ffffff;
 }
 
+.announcement-read {
+    color: gray !important;
+}
+
 .announcement-list {
     list-style-type: none;
     padding: 0;
