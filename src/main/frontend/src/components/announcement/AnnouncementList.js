@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
+import {collection, query, onSnapshot, orderBy, updateDoc, doc} from 'firebase/firestore';
 import { db } from '../../firebase/firebase-init';
 import { useAuth } from '../auth/Auth';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,7 @@ import '../common.css';
 const AnnouncementList = () => {
     const { currentUser, login, logout, role } = useAuth();
     const [announcements, setAnnouncements] = useState([]);
-    const [expandedIds, setExpandedIds] = useState({})
+    const [expandedIds, setExpandedIds] = useState({});
 
     useEffect(() => {
         const qGeneral = query(collection(db, 'announcements', 'general', 'announcements'), orderBy('timestamp', 'desc'));
@@ -49,6 +49,23 @@ const AnnouncementList = () => {
         setExpandedIds((prev) => ({ ...prev, [id]: !prev[id] }));
     }
 
+    const toggleButton = async (announcement) => {
+        toggleExpand(announcement.id);
+        console.log("UID : ", currentUser.uid);
+
+        const userUID = currentUser.uid;
+        const announcementDocRef = doc(db, 'announcements', announcement.type, 'announcements', announcement.id);
+
+        try {
+            await updateDoc(announcementDocRef, {
+                [`readBy.${userUID}`]: true
+            });
+            console.log("Updated");
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+
     const renderButtons = () => {
         if (currentUser) {
             return (
@@ -71,19 +88,20 @@ const AnnouncementList = () => {
             <header className="header">
                 <h2>공지사항</h2>
                 <div className="buttons">
-                    {renderButtons()}
+                    { renderButtons() }
                 </div>
             </header>
             <main>
                 <ul className="announcement-list">
                     {announcements.map((announcement) => (
-                        <li key={`${announcement.type}-${announcement.id}`} className="announcement-item"
-                                onClick={() => toggleExpand(announcement.id)}>
+                        <li key={`${announcement.type}-${announcement.id}`}
+                            className={`announcement-item ${announcement.readBy && announcement.readBy[currentUser?.uid] ? 'announcement-read' : ''}`}
+                            onClick={() => { toggleButton(announcement) }}>
                             <div className="announcement-header">
                                 <span className={`announcement-tag ${announcement.type}`}>
                                     {announcement.type === 'general' ? '전체공지' : '클라이언트1'}
                                 </span>
-                                <h3>{announcement.title}</h3>
+                                <h3 className={`${announcement.readBy && announcement.readBy[currentUser?.uid] ? 'announcement-read' : ''}`}>{announcement.title}</h3>
                                 <small>By {announcement.author} on {new Date(announcement.timestamp.toDate()).toLocaleString()}</small>
                             </div>
                             {expandedIds[announcement.id] && (
