@@ -51,14 +51,12 @@ const AddAnnouncement = () => {
                 author: userName,
                 timestamp: new Date()
             };
-
             alert('공지 등록 성공');
             setTitle('');
             setContent('');
             navigate('/');
             await postAnnouncementToBackend(message);
         } catch (error) {
-            console.error('공지 등록 실패:', error);
             showAlertAndSetLoading('공지 등록 실패', false);
         } finally {
             setLoading(false);
