@@ -4,13 +4,10 @@ import { AuthProvider } from './components/auth/Auth';
 import AddAnnouncement from './components/announcement/AddAnnouncement';
 import AnnouncementList from './components/announcement/AnnouncementList';
 import PrivateRoute from './components/auth/PrivateRoute';
-import { requestPermission, onMessageListener } from './firebase/firebase-init';
+import { onMessageListener } from './firebase/firebase-init';
 
 const App = () => {
     useEffect(() => {
-        // 알림 권한 요청
-        requestPermission();
-
         // 수신 메시지 리스너 설정
         onMessageListener()
             .then((payload) => {
