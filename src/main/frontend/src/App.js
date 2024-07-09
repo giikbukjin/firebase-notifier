@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './components/auth/Auth';
 import AddAnnouncement from './components/announcement/AddAnnouncement';
+import CheckReadAnnouncement from './components/announcement/CheckReadAnnouncement';
 import AnnouncementList from './components/announcement/AnnouncementList';
 import PrivateRoute from './components/auth/PrivateRoute';
 import { onMessageListener } from './firebase/firebase-init';
@@ -25,7 +26,8 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<AnnouncementList />} />
                         <Route element={<PrivateRoute requiredRole="admin" />}>
-                            <Route path="/admin" element={<AddAnnouncement />} />
+                            <Route path="/add" element={<AddAnnouncement />} />
+                            <Route path="/check" element={<CheckReadAnnouncement />} />
                         </Route>
                     </Routes>
                 </div>

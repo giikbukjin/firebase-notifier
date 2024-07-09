@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { collection, query, onSnapshot, orderBy, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase-init';
 import { useAuth } from '../auth/Auth';
@@ -7,10 +7,11 @@ import '../common.css';
 import { v4 as uuidv4 } from 'uuid';
 
 const AnnouncementList = () => {
+    const [userId, setUserId] = useState(null);
     const { currentUser, login, logout, role } = useAuth();
     const [announcements, setAnnouncements] = useState([]);
     const [expandedIds, setExpandedIds] = useState({});
-    const [userId, setUserId] = useState(null);
+    const contentRefs = useRef({});
 
     useEffect(() => {
         const dataQuery = query(collection(db, "announcements"), orderBy("timestamp", "desc"));
@@ -29,7 +30,8 @@ const AnnouncementList = () => {
             // UUID 생성 및 저장
             storedUserId = uuidv4();
             localStorage.setItem('user-id', storedUserId);
-        } setUserId(storedUserId);
+        }
+        setUserId(storedUserId);
 
         return () => {
             unsubscribe();
@@ -64,8 +66,13 @@ const AnnouncementList = () => {
                 <>
                     <button className="auth-button" onClick={logout}>로그아웃</button>
                     {role === 'admin' && (
-                        <Link to="/admin">
+                        <Link to="/add">
                             <button className="admin-button">공지사항 작성</button>
+                        </Link>
+                    )}
+                    {role === 'admin' && (
+                        <Link to="/check">
+                            <button className="admin-button">읽음 확인</button>
                         </Link>
                     )}
                 </>
@@ -74,6 +81,17 @@ const AnnouncementList = () => {
             return <button className="auth-button" onClick={login}>관리자 로그인</button>
         }
     };
+
+    useEffect(() => {
+        Object.keys(contentRefs.current).forEach((id) => {
+            const element = contentRefs.current[id];
+            if (expandedIds[id]) {
+                element.style.maxHeight = `${element.scrollHeight}px`;
+            } else {
+                element.style.maxHeight = '0px';
+            }
+        });
+    }, [expandedIds]);
 
     return (
         <div className="container">
@@ -96,17 +114,17 @@ const AnnouncementList = () => {
                                 <h3 className={`${isRead(announcement) ? 'announcement-read' : ''}`}>{announcement.title}</h3>
                                 <small>By {announcement.author} on {new Date(announcement.timestamp.toDate()).toLocaleString()}</small>
                             </div>
-                            {expandedIds[announcement.id] && (
-                                <>
+                            <div className={`announcement-content ${expandedIds[announcement.id] ? 'expanded' : ''}`} ref={el => contentRefs.current[announcement.id] = el}>
+                                <div className="content-inner">
                                     <p>{announcement.content}</p>
-                                </>
-                            )}
+                                </div>
+                            </div>
                         </li>
                     ))}
                 </ul>
             </main>
         </div>
     );
-};
+}
 
 export default AnnouncementList;
