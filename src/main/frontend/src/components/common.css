@@ -33,7 +33,7 @@ body {
     width: 100%;
     margin: 20px 0;
     box-sizing: border-box;
-    padding: 0 0 60px 0;
+    padding: 0 0 30px 0;
 }
 
 .back-button {
@@ -100,6 +100,11 @@ h2 {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    transition: background-color 0.3s ease;
+}
+
+.announcement-item:hover {
+    background-color: #1a1a1a;
 }
 
 .announcement-item h3 {
@@ -124,6 +129,20 @@ h2 {
     align-self: flex-end;
 }
 
+.announcement-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+}
+
+.announcement-content.expanded {
+    max-height: 500px;
+}
+
+.content-inner {
+    padding: 10px 0;
+}
+
 .announcement-form {
     width: calc(100% - 40px);
     max-width: 800px;
@@ -134,9 +153,44 @@ h2 {
     margin: 0 auto;
 }
 
+.announcement-read-status {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.announcement-read-status th,
+.announcement-read-status td {
+    border: 1px solid #272624;
+    padding: 12px;
+    text-align: left;
+    color: white; /* Ensuring text color is white for visibility on dark background */
+}
+
+.announcement-read-status th {
+    background-color: #333;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.announcement-read-status tr:nth-child(even) {
+    background-color: #1a1a1a;
+}
+
+.announcement-read-status td ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.announcement-read-status td ul li {
+    margin: 5px 0;
+}
+
 .form-group {
     margin-bottom: 15px;
     width: 100%;
+    position: relative;
 }
 
 .form-group label {
@@ -166,6 +220,16 @@ h2 {
 .form-group textarea {
     resize: none;
     height: 200px;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #272624;
+    border-radius: 8px;
+    font-size: 16px;
+    color: white;
+    background-color: #272624;
 }
 
 .submit-button {

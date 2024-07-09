@@ -77,19 +77,19 @@ const AddAnnouncement = () => {
             <main>
                 <form onSubmit={handleSubmit} className="announcement-form">
                     <div className="form-group">
-                    <label>제목</label>
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required/>
-                    </div>
-                    <div className="form-group">
-                        <label>내용</label>
-                        <textarea value={content} onChange={(e) => setContent(e.target.value)} required></textarea>
-                    </div>
-                    <div className="form-group">
                         <label>대상</label>
                         <select value={type} onChange={(e) => setType(e.target.value)} required>
                             <option value="general">전체</option>
                             <option value="client1">클라이언트 1</option>
                         </select>
+                    </div>
+                    <div className="form-group">
+                        <label>제목</label>
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required/>
+                    </div>
+                    <div className="form-group">
+                        <label>내용</label>
+                        <textarea value={content} onChange={(e) => setContent(e.target.value)} required></textarea>
                     </div>
                     <button type="submit" className="submit-button" disabled={loading}>
                         {loading ? '등록 중...' : '공지사항 등록'}
