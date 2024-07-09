@@ -11,7 +11,7 @@ const AddAnnouncement = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(false);
-    const [audience, setAudience] = useState('general');
+    const [type, setType] = useState('general');
     const navigate = useNavigate();
 
     const showAlertAndSetLoading = (message, isLoading) => {
@@ -36,18 +36,21 @@ const AddAnnouncement = () => {
             }
 
             const userName = userDoc.data().name;
-            const announcementDocRef = collection(db, 'announcements', audience, 'announcements');
+            const announcementDocRef = collection(db, 'announcements');
             await addDoc(announcementDocRef, {
                 title,
                 content,
                 author: userName,
+                type,
                 timestamp: new Date(),
                 readBy: {}
             });
 
+            // 백엔드에 보낼 메세지
             const message = {
                 title,
                 content,
+                type,
                 author: userName,
                 timestamp: new Date()
             };
@@ -80,7 +83,7 @@ const AddAnnouncement = () => {
                     </div>
                     <div className="form-group">
                         <label>대상</label>
-                        <select value={audience} onChange={(e) => setAudience(e.target.value)} required>
+                        <select value={type} onChange={(e) => setType(e.target.value)} required>
                             <option value="general">전체</option>
                             <option value="client1">클라이언트 1</option>
                         </select>

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {collection, query, onSnapshot, orderBy, updateDoc, doc} from 'firebase/firestore';
-import { db } from '../../firebase/firebase-init';
+import { collection, query, onSnapshot, orderBy, updateDoc, doc } from 'firebase/firestore';
+import { db, token } from '../../firebase/firebase-init';
 import { useAuth } from '../auth/Auth';
 import { Link } from 'react-router-dom';
-import { handleAllowNotification } from '../service/handleAllowNotification';
 import '../common.css';
 
 const AnnouncementList = () => {
@@ -12,38 +11,23 @@ const AnnouncementList = () => {
     const [expandedIds, setExpandedIds] = useState({});
 
     useEffect(() => {
-        const qGeneral = query(collection(db, 'announcements', 'general', 'announcements'), orderBy('timestamp', 'desc'));
-        const qClient1 = query(collection(db, 'announcements', 'client1', 'announcements'), orderBy('timestamp', 'desc'));
+        const dataQuery = query(collection(db, "announcements"), orderBy("timestamp", "desc"));
 
-        const unsubscribeGeneral = onSnapshot(qGeneral, (querySnapshot) => {
-            console.log('전체 공지사항 데이터를 불러왔습니다.');
-            const generalAnnouncements = querySnapshot.docs.map(doc => ({
+        const handleSnapshot = (querySnapshot) => {
+            console.log('공지사항 데이터를 불러왔습니다.');
+            const newAnnouncements = querySnapshot.docs.map(doc => ({
                 id: doc.id,
-                type: 'general',
                 ...doc.data()
             }));
-            setAnnouncements(prev => [...prev.filter(a => a.type !== 'general'), ...generalAnnouncements]);
-        });
+            setAnnouncements(newAnnouncements);
+        };
 
-        const unsubscribeClient1 = onSnapshot(qClient1, (querySnapshot) => {
-            console.log('클라이언트 1 공지사항 데이터를 불러왔습니다.');
-            const client1Announcements = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                type: 'client1',
-                ...doc.data()
-            }));
-            setAnnouncements(prev => [...prev.filter(a => a.type !== 'client1'), ...client1Announcements]);
-        });
-
-        if (currentUser) {
-            handleAllowNotification(currentUser);
-        }
+        const unsubscribe = onSnapshot(dataQuery, handleSnapshot);
 
         return () => {
-            unsubscribeGeneral();
-            unsubscribeClient1();
+            unsubscribe();
         };
-    }, [currentUser]);
+    }, [db]);
 
     const toggleExpand = (id) => {
         setExpandedIds((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -51,14 +35,12 @@ const AnnouncementList = () => {
 
     const toggleButton = async (announcement) => {
         toggleExpand(announcement.id);
-        console.log("UID : ", currentUser.uid);
 
-        const userUID = currentUser.uid;
-        const announcementDocRef = doc(db, 'announcements', announcement.type, 'announcements', announcement.id);
+        const announcementDocRef = doc(db, 'announcements', announcement.id);
 
         try {
             await updateDoc(announcementDocRef, {
-                [`readBy.${userUID}`]: true
+                [`readBy.${token}`]: true
             });
             console.log("Updated");
         } catch (e) {
@@ -94,14 +76,14 @@ const AnnouncementList = () => {
             <main>
                 <ul className="announcement-list">
                     {announcements.map((announcement) => (
-                        <li key={`${announcement.type}-${announcement.id}`}
-                            className={`announcement-item ${announcement.readBy && announcement.readBy[currentUser?.uid] ? 'announcement-read' : ''}`}
+                        <li key={announcement.id}
+                            className={`announcement-item ${announcement.readBy && announcement.readBy[token] ? 'announcement-read' : ''}`}
                             onClick={() => { toggleButton(announcement) }}>
                             <div className="announcement-header">
                                 <span className={`announcement-tag ${announcement.type}`}>
                                     {announcement.type === 'general' ? '전체공지' : '클라이언트1'}
                                 </span>
-                                <h3 className={`${announcement.readBy && announcement.readBy[currentUser?.uid] ? 'announcement-read' : ''}`}>{announcement.title}</h3>
+                                <h3 className={`${announcement.readBy && announcement.readBy[token] ? 'announcement-read' : ''}`}>{announcement.title}</h3>
                                 <small>By {announcement.author} on {new Date(announcement.timestamp.toDate()).toLocaleString()}</small>
                             </div>
                             {expandedIds[announcement.id] && (

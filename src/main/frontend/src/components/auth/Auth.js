@@ -1,14 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
-    auth,
-    db,
-    doc,
-    getDoc,
-    GoogleAuthProvider,
-    onAuthStateChanged,
-    signInWithPopup,
-    signOut
-} from '../../firebase/firebase-init';
+import { auth, db, doc, getDoc, GoogleAuthProvider, onAuthStateChanged,
+    signInWithPopup, signOut} from '../../firebase/firebase-init';
 
 // Firebase를 사용하여 사용자의 인증 상태 관리, Google 로그인 기능 제공
 const AuthContext = React.createContext();

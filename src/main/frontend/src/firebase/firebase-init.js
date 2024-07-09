@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
-import {getFirestore, doc, getDoc, setDoc} from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import axios from 'axios';
 
@@ -14,11 +14,12 @@ const firebaseConfig = {
     measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
 
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const messaging = getMessaging(app);
 const provider = new GoogleAuthProvider();
+export const token = await getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY });
 
 export { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
     doc, getDoc, messaging, provider };
@@ -27,7 +28,6 @@ export const requestPermission = async () => {
     try {
         await Notification.requestPermission();
         console.log('알림 권한이 부여되었습니다.');
-        const token = await getToken(messaging, { vapidKey: process.env.REACT_APP_VAPID_KEY });
         console.log('FCM 토큰:', token);
         await fetch('http://localhost:8080/subscribe', {
             method: 'POST',
