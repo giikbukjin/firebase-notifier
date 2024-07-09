@@ -16,6 +16,7 @@ public class AnnouncementController {
         System.out.println("공지사항 내용: " + message.getContent());
         System.out.println("작성자: " + message.getAuthor());
         System.out.println("타임스탬프: " + message.getTimestamp());
+        System.out.println("발송 대상: " + message.getType());
         return new ResponseEntity<>("공지사항이 성공적으로 접수되었습니다.", HttpStatus.OK);
     }
 }
