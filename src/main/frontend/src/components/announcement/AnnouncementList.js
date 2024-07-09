@@ -4,46 +4,15 @@ import { db } from '../../firebase/firebase-init';
 import { useAuth } from '../auth/Auth';
 import { Link } from 'react-router-dom';
 import '../common.css';
-import { getMessaging, getToken } from "firebase/messaging";
+import { v4 as uuidv4 } from 'uuid';
 
 const AnnouncementList = () => {
     const { currentUser, login, logout, role } = useAuth();
     const [announcements, setAnnouncements] = useState([]);
     const [expandedIds, setExpandedIds] = useState({});
-    const [notificationPermission, setNotificationPermission] = useState(null);
-    const [ token, setToken ] = useState(null);
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        const messaging = getMessaging();
-
-        const requestForToken = () => {
-            return getToken(messaging, {vapidKey: process.env.REACT_APP_VAPID_KEY})
-                .then((token) => {
-                    if (token) {
-                        console.log('FCM 토큰:', token);
-                        setToken(token);
-                    } else {
-                        console.error('알림 권한을 부여받을 수 없습니다.');
-                    }
-                })
-                .catch((err) => {
-                    if (err.code === 'messaging/permission-blocked') {
-                        console.error("알림 권한이 차단되었습니다.");
-                    } else {
-                        console.error("FCM 토큰 요청 중 오류가 발생했습니다.", err);
-                    }
-                });
-        };
-
-        Notification.requestPermission().then((permission) => {
-            setNotificationPermission(permission);
-            if (permission === 'granted') {
-                requestForToken();
-            } else {
-                console.log('알림 비허용');
-            }
-        })
-
         const dataQuery = query(collection(db, "announcements"), orderBy("timestamp", "desc"));
         const handleSnapshot = (querySnapshot) => {
             console.log('공지사항 데이터를 불러왔습니다.');
@@ -54,6 +23,13 @@ const AnnouncementList = () => {
             setAnnouncements(newAnnouncements);
         };
         const unsubscribe = onSnapshot(dataQuery, handleSnapshot);
+        let storedUserId = localStorage.getItem('user-id');
+
+        if (!storedUserId) {
+            // UUID 생성 및 저장
+            storedUserId = uuidv4();
+            localStorage.setItem('user-id', storedUserId);
+        } setUserId(storedUserId);
 
         return () => {
             unsubscribe();
@@ -66,22 +42,20 @@ const AnnouncementList = () => {
 
     const toggleButton = async (announcement) => {
         toggleExpand(announcement.id);
+        const announcementDocRef = doc(db, 'announcements', announcement.id);
 
-        if (notificationPermission === 'granted' && token) {
-            const announcementDocRef = doc(db, 'announcements', announcement.id);
-            try {
-                await updateDoc(announcementDocRef, {
-                    [`readBy.${token}`]: true
-                });
-                console.log("Updated");
-            } catch (e) {
-                console.error(e.message);
-            }
+        try {
+            await updateDoc(announcementDocRef, {
+                [`readBy.${userId}`]: true
+            });
+            console.log("Updated");
+        } catch (e) {
+            console.error(e.message);
         }
     }
 
     const isRead = (announcement) => {
-        return token && announcement.readBy && announcement.readBy[token];
+        return userId && announcement.readBy && announcement.readBy[userId];
     }
 
     const renderButtons = () => {
