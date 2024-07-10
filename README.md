@@ -37,11 +37,11 @@ Firebase와 React, Spring Boot를 활용한 실시간 공지사항 등록 및 �
             }
   users
     └── {userUid} - UID 입력
-  		  ├── name: "관리자 이름"
+        ├── name: "관리자 이름"
         └── role: "admin"
   clients
     └── {userUuid} - UUID 입력
-  		  └── name: "사용자 이름(admin, client1 등)"
+        └── name: "사용자 이름(admin, client1 등)"
   ```
   
 ### 관리자(admin) 계정 지정
