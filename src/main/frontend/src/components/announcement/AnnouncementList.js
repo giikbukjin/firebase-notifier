@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { collection, query, onSnapshot, orderBy, updateDoc, doc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase-init';
-import { useAuth } from '../auth/Auth';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useRef, useState} from 'react';
+import {collection, doc, onSnapshot, orderBy, query, updateDoc} from 'firebase/firestore';
+import {db} from '../../firebase/firebase-init';
+import {useAuth} from '../auth/Auth';
+import {Link} from 'react-router-dom';
 import '../common.css';
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
+import {fetchAnnouncements} from "./FetchAnnouncements";
 
 const AnnouncementList = () => {
     const [userId, setUserId] = useState(null);
@@ -14,18 +15,9 @@ const AnnouncementList = () => {
     const contentRefs = useRef({});
 
     useEffect(() => {
-        const dataQuery = query(collection(db, "announcements"), orderBy("timestamp", "desc"));
-        const handleSnapshot = (querySnapshot) => {
-            console.log('공지사항 데이터를 불러왔습니다.');
-            const newAnnouncements = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setAnnouncements(newAnnouncements);
-        };
-        const unsubscribe = onSnapshot(dataQuery, handleSnapshot);
-        let storedUserId = localStorage.getItem('user-id');
+        const unsubscribe = fetchAnnouncements(setAnnouncements);
 
+        let storedUserId = localStorage.getItem('user-id');
         if (!storedUserId) {
             // UUID 생성 및 저장
             storedUserId = uuidv4();
@@ -33,10 +25,9 @@ const AnnouncementList = () => {
         }
         setUserId(storedUserId);
 
-        return () => {
-            unsubscribe();
-        };
-    }, [db]);
+        // 컴포넌트 언마운트 시 데이터 구독 해제
+        return () => unsubscribe();
+    }, []);
 
     const toggleExpand = (id) => {
         setExpandedIds((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -82,6 +73,7 @@ const AnnouncementList = () => {
         }
     };
 
+    // 토글 애니메이션
     useEffect(() => {
         Object.keys(contentRefs.current).forEach((id) => {
             const element = contentRefs.current[id];

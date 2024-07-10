@@ -45,7 +45,6 @@ export const AuthProvider = ({ children }) => {
             } else {
                 setCurrentUser(null);
                 setRole(null);
-                console.log('로그아웃 상태입니다.');
             }
             setLoading(false);
         });

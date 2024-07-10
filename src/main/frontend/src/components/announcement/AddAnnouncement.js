@@ -14,16 +14,11 @@ const AddAnnouncement = () => {
     const [type, setType] = useState('general');
     const navigate = useNavigate();
 
-    const showAlertAndSetLoading = (message, isLoading) => {
-        alert(message);
-        setLoading(isLoading);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (role !== 'admin') {
-            showAlertAndSetLoading('공지 등록 실패: 계정 권한이 없습니다.', false);
+            alert('공지 등록 실패: 계정 권한이 없습니다.', false);
             return;
         }
         setLoading(true);
@@ -31,7 +26,7 @@ const AddAnnouncement = () => {
         try {
             const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
             if (!userDoc.exists()) {
-                showAlertAndSetLoading('공지 등록 실패: 사용자가 존재하지 않습니다.', false);
+                alert('공지 등록 실패: 사용자가 존재하지 않습니다.', false);
                 return;
             }
 
@@ -60,7 +55,7 @@ const AddAnnouncement = () => {
             navigate('/');
             await postAnnouncementToBackend(message);
         } catch (error) {
-            showAlertAndSetLoading('공지 등록 실패', false);
+            alert('공지 등록 실패', false);
         } finally {
             setLoading(false);
         }
