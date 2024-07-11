@@ -21,7 +21,7 @@ const provider = new GoogleAuthProvider();
 const messaging = getMessaging();
 
 export { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
-    doc, getDoc, messaging, provider };
+    doc, getDoc, messaging, provider, app };
 
 export const onMessageListener = () =>
     new Promise((resolve) => {

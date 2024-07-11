@@ -1,11 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {doc, onSnapshot, orderBy, query, updateDoc} from 'firebase/firestore';
+import {doc, updateDoc} from 'firebase/firestore';
 import {db} from '../../firebase/firebase-init';
 import {useAuth} from '../auth/Auth';
 import {Link} from 'react-router-dom';
 import '../common.css';
 import {v4 as uuidv4} from 'uuid';
 import {fetchAnnouncements} from "./FetchAnnouncements";
+import {requestPermission} from "../notification/RequestPermission";
 
 const AnnouncementList = () => {
     const [userId, setUserId] = useState(null);
@@ -16,7 +17,7 @@ const AnnouncementList = () => {
 
     useEffect(() => {
         const unsubscribe = fetchAnnouncements(setAnnouncements);
-
+        requestPermission()
         let storedUserId = localStorage.getItem('user-id');
         if (!storedUserId) {
             // UUID 생성 및 저장
