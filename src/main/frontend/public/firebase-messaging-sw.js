@@ -10,13 +10,13 @@ self.addEventListener("activate", function (e) {
 });
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCX5FIkIXGZOvFojpKhsIoOME4QGrhHuog",
-    authDomain: "fir-notifier-ffcfd.firebaseapp.com",
-    projectId: "fir-notifier-ffcfd",
-    storageBucket: "fir-notifier-ffcfd.appspot.com",
-    messagingSenderId: "73444890210",
-    appId: "1:73444890210:web:16555aad5b65783fafa33b",
-    measurementId: "G-7N8BT8VM83"
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
 
 firebase.initializeApp(firebaseConfig);
